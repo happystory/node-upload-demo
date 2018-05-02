@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Demo 2</title>
+</head>
+<body>
+  <form id="testForm" action="/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" id="file">
+    <input type="submit" value="提交">
+  </form>
+
+  <script>
+    (function() {
+      document.addEventListener("DOMContentLoaded", function(event) {
+        var form = document.querySelector('#testForm')
+        form.addEventListener('submit', function(event) {
+          event.preventDefault()
+
+          var file = document.querySelector('#file')
+          var fileObj = file.files[0]
+          console.log(fileObj)
+
+          var form = new FormData()
+          form.append("file", fileObj)
+
+          var xhr = new XMLHttpRequest()
+          xhr.open('POST', '/upload', true)
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              let res = JSON.parse(xhr.responseText)
+              console.log(res)
+              if (res.errno === 0) {
+                alert('保存成功')
+              }
+            }
+          }
+          xhr.send(form)
+        })
+      })
+    })()
+  </script>
+</body>
+</html>
