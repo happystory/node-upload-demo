@@ -15,8 +15,19 @@ router.post('/', function(req, res, next) {
     } else {
       files.file.forEach(file => {
         const { originalFilename, path } = file
-        fs.rename(path, resolve(__dirname, '../uploads', originalFilename), (err, data) => {
-          if (err) throw new Error(err)
+        // fs.rename(path, resolve(__dirname, '../uploads', originalFilename), (err, data) => {
+        //   if (err) throw new Error(err)
+        //   res.json({
+        //     errno: 0,
+        //     message: '保存成功'
+        //   })
+        // })
+
+        var readStream = fs.createReadStream(path)
+        var writeStream = fs.createWriteStream(resolve(__dirname, '../uploads', originalFilename))
+        readStream.pipe(writeStream)
+        readStream.on('end', () => {
+          fs.unlinkSync(path)
           res.json({
             errno: 0,
             message: '保存成功'
